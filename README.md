@@ -4,7 +4,7 @@ Application Windows 10/11 x64 par XT.07. Interface française sombre, logo Tux (
 
 ## Installation
 
-Exécuter `Speed-Test-V1-Setup-1.0.0.exe`. L'assistant personnalisé permet de choisir le dossier et crée un raccourci. Aucune installation de Node.js ou Python n'est nécessaire pour l'utilisateur. Désinstallation depuis les paramètres Windows.
+Télécharger l'installateur dans [Releases](https://github.com/xt0725/Speed-Test-V1/releases), puis exécuter `Speed-Test-V1-Setup-1.0.0.exe`. L'assistant personnalisé permet de choisir le dossier et crée un raccourci. Aucune installation de Node.js ou Python n'est nécessaire pour l'utilisateur. Désinstallation depuis les paramètres Windows.
 
 ## Confidentialité
 
@@ -27,7 +27,7 @@ npm start
 npm run dist -- --publish never
 ```
 
-La compilation Windows via GitHub Actions intègre Tux dans l'exécutable, l'installateur et le raccourci. Le workflow produit un artefact téléchargeable à chaque push sur main. Un tag `v1.0.0` publie une release avec l'installateur.
+La compilation Windows via GitHub Actions intègre Tux dans l'exécutable, l'installateur et le raccourci. Chaque push sur main produit un artefact téléchargeable et publie l'installateur dans la release correspondant à la version de package.json. Les tags `v*` peuvent également déclencher une publication.
 
 Sous Linux, `npm run dist:cross` compile le programme et l'assistant NSIS personnalisé, avec Tux intégré dans les ressources de l'exécutable. NSIS doit être disponible dans le cache electron-builder ou via la variable MAKENSIS. Le script génère un désinstalleur qui supprime explicitement les fichiers de l'application.
 

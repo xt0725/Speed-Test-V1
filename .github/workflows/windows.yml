@@ -1,0 +1,44 @@
+name: Windows Installer
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run dist -- --publish never
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Speed-Test-V1-Windows
+          path: dist/Speed-Test-V1-Setup-*.exe
+      - name: Publier la version
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $version = node -p "require('./package.json').version"
+          $tag = "v$version"
+          if ($env:GITHUB_REF -like 'refs/tags/*') { $tag = $env:GITHUB_REF_NAME }
+          gh release view $tag --repo $env:GITHUB_REPOSITORY *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag ./dist/Speed-Test-V1-Setup-*.exe --repo $env:GITHUB_REPOSITORY --clobber
+          } else {
+            gh release create $tag ./dist/Speed-Test-V1-Setup-*.exe --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title "Speed Test V1 $tag" --notes "Installateur Windows personnalisé avec Tux. Débits descendant et montant, ping HTTP, IP masquée avec confirmation obligatoire."
+          }
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    permissions:
+      contents: write
